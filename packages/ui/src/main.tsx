@@ -33,6 +33,6 @@ const root = createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <StrictMode>
     <RouterProvider router={router} />
-    <Toaster />
+    <Toaster position="top-right" richColors />
   </StrictMode>,
 );
