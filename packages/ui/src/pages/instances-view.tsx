@@ -1,5 +1,7 @@
-import { Copy, Edit2, Plus, Trash2 } from "lucide-react";
+import { CopyIcon, EditIcon, Plus, RocketIcon, Trash2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { startGame } from "@/client";
 import InstanceCreationModal from "@/components/instance-creation-modal";
 import InstanceEditorModal from "@/components/instance-editor-modal";
 import { Button } from "@/components/ui/button";
@@ -12,9 +14,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { toNumber } from "@/lib/tsrs-utils";
+import { cn } from "@/lib/utils";
 import { useInstanceStore } from "@/models/instance";
-import type { Instance } from "../types/bindings/instance";
+import type { Instance } from "@/types";
 
 export function InstancesView() {
   const instancesStore = useInstanceStore();
@@ -76,21 +78,6 @@ export function InstancesView() {
     setShowDuplicateModal(false);
   };
 
-  const formatDate = (timestamp: number): string =>
-    new Date(timestamp * 1000).toLocaleDateString();
-
-  const formatLastPlayed = (timestamp: number): string => {
-    const date = new Date(timestamp * 1000);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (days === 0) return "Today";
-    if (days === 1) return "Yesterday";
-    if (days < 7) return `${days} days ago`;
-    return date.toLocaleDateString();
-  };
-
   return (
     <div className="h-full flex flex-col gap-4 p-6 overflow-y-auto">
       <div className="flex items-center justify-between">
@@ -115,7 +102,7 @@ export function InstancesView() {
           </div>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ul className="flex flex-col space-y-3">
           {instancesStore.instances.map((instance) => {
             const isActive = instancesStore.activeInstance?.id === instance.id;
 
@@ -123,98 +110,109 @@ export function InstancesView() {
               <li
                 key={instance.id}
                 onClick={() => instancesStore.setActiveInstance(instance)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" &&
-                  instancesStore.setActiveInstance(instance)
-                }
-                className={`relative p-4 text-left border-2 transition-all cursor-pointer hover:border-blue-500 ${
-                  isActive ? "border-blue-500" : "border-transparent"
-                } bg-gray-100 dark:bg-gray-800`}
+                onKeyDown={async (e) => {
+                  if (e.key === "Enter") {
+                    try {
+                      await instancesStore.setActiveInstance(instance);
+                    } catch (e) {
+                      console.error("Failed to set active instance:", e);
+                      toast.error("Error setting active instance");
+                    }
+                  }
+                }}
+                className="cursor-pointer"
               >
-                {/* Instance Icon */}
-                {instance.iconPath ? (
-                  <div className="w-12 h-12 mb-3 rounded overflow-hidden">
-                    <img
-                      src={instance.iconPath}
-                      alt={instance.name}
-                      className="w-full h-full object-cover"
-                    />
+                <div
+                  className={cn(
+                    "flex flex-row space-x-3 p-3 justify-between",
+                    "border bg-card/5 backdrop-blur-xl",
+                    "hover:bg-accent/50 transition-colors",
+                    isActive && "border-primary",
+                  )}
+                >
+                  <div className="flex flex-row space-x-4">
+                    {instance.iconPath ? (
+                      <div className="w-12 h-12 rounded overflow-hidden">
+                        <img
+                          src={instance.iconPath}
+                          alt={instance.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-12 h-12 rounded bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <span className="text-white font-bold text-lg">
+                          {instance.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col">
+                      <h3 className="text-lg font-semibold">{instance.name}</h3>
+                      {instance.versionId ? (
+                        <p className="text-sm text-muted-foreground">
+                          {instance.versionId}
+                        </p>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          No version selected
+                        </p>
+                      )}
+                    </div>
                   </div>
-                ) : (
-                  <div className="w-12 h-12 mb-3 rounded bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">
-                      {instance.name.charAt(0).toUpperCase()}
-                    </span>
+
+                  <div className="flex items-center">
+                    <div className="flex flex-row space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={async () => {
+                          if (!instance.versionId) {
+                            toast.error("No version selected or installed");
+                            return;
+                          }
+                          try {
+                            await startGame(instance.id, instance.versionId);
+                          } catch (e) {
+                            console.error("Failed to start game:", e);
+                            toast.error("Error starting game");
+                          }
+                        }}
+                      >
+                        <RocketIcon />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDuplicate(instance);
+                        }}
+                      >
+                        <CopyIcon />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openEdit(instance);
+                        }}
+                      >
+                        <EditIcon />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openDelete(instance);
+                        }}
+                      >
+                        <Trash2Icon />
+                      </Button>
+                    </div>
                   </div>
-                )}
-
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                  {instance.name}
-                </h3>
-
-                <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                  {instance.versionId ? (
-                    <p className="truncate">Version: {instance.versionId}</p>
-                  ) : (
-                    <p className="text-gray-400">No version selected</p>
-                  )}
-
-                  {instance.modLoader && (
-                    <p className="truncate">
-                      Mod Loader:{" "}
-                      <span className="capitalize">{instance.modLoader}</span>
-                    </p>
-                  )}
-
-                  <p className="truncate">
-                    Created: {formatDate(toNumber(instance.createdAt))}
-                  </p>
-
-                  {instance.lastPlayed && (
-                    <p className="truncate">
-                      Last played:{" "}
-                      {formatLastPlayed(toNumber(instance.lastPlayed))}
-                    </p>
-                  )}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="mt-4 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEdit(instance);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-sm transition-colors"
-                  >
-                    <Edit2 size={14} />
-                    Edit
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openDuplicate(instance);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded text-sm transition-colors"
-                  >
-                    <Copy size={14} />
-                    Duplicate
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openDelete(instance);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded text-sm transition-colors"
-                  >
-                    <Trash2 size={14} />
-                    Delete
-                  </button>
                 </div>
               </li>
             );

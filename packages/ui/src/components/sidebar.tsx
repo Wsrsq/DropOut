@@ -51,7 +51,7 @@ export function Sidebar() {
 
   const renderUserAvatar = () => {
     return (
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center hover:bg-accent/90 transition-colors cursor-pointer">
         <div className="lg:hidden">
           <UserAvatar />
         </div>
