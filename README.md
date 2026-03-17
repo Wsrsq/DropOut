@@ -11,10 +11,12 @@ English | [中文](README.CN.md)
 [![Semifold CI](https://github.com/HydroRoll-Team/DropOut/actions/workflows/semifold-ci.yaml/badge.svg)](https://github.com/HydroRoll-Team/DropOut/actions/workflows/release.yml)
 [![Test & Build](https://github.com/HydroRoll-Team/DropOut/actions/workflows/test.yml/badge.svg)](https://github.com/HydroRoll-Team/DropOut/actions/workflows/test.yml)
 
+<img align="right" src="https://repology.org/badge/vertical-allrepos/dropout.svg?columns=2" alt="DropOut package status on Repology" />
+
 DropOut is a modern, reproducible, and developer-grade Minecraft launcher.
 It is designed not just to launch Minecraft, but to manage Minecraft environments as deterministic, versioned workspaces.
 
-Built with Tauri v2 and Rust, DropOut delivers native performance and minimal resource usage, paired with a modern reactive web UI (currently Svelte 5, migrating to React).
+Built with Tauri v2, DropOut delivers native performance and minimal resource usage, paired with a modern reactive web UI built with React 19, shadcn/ui, and Tailwind CSS 4.
 
 > Minecraft environments are complex systems.
 > DropOut treats them like software projects.
@@ -28,21 +30,21 @@ Built with Tauri v2 and Rust, DropOut delivers native performance and minimal re
 Most Minecraft launchers focus on getting you into the game.
 DropOut focuses on keeping your game stable, debuggable, and reproducible.
 
-- Your instance worked yesterday but broke today?  
-→ DropOut makes it traceable.
+- Your instance worked yesterday but broke today?\
+  → DropOut makes it traceable.
 
-- Sharing a modpack means zipping gigabytes?  
-→ DropOut shares exact dependency manifests.
+- Sharing a modpack means zipping gigabytes?\
+  → DropOut shares exact dependency manifests.
 
-- Java, loader, mods, configs drift out of sync?  
-→ DropOut locks them together.
+- Java, loader, mods, configs drift out of sync?\
+  → DropOut locks them together.
 
 This launcher is built for players who value control, transparency, and long-term stability.
 
 ## Features
 
 - **High Performance**: Built with Rust and Tauri for minimal resource usage and fast startup times.
-- **Modern Industrial UI**: A clean, distraction-free interface designed with **Svelte 5** and **Tailwind CSS 4**.
+- **Modern Industrial UI**: A clean, distraction-free interface designed with **React 19**, **shadcn/ui**, and **Tailwind CSS 4**.
 - **Microsoft Authentication**: Secure login support via official Xbox Live & Microsoft OAuth flows (Device Code Flow).
 - **Mod Loader Support**:
   - **Fabric**: Built-in installer and version management.
@@ -60,14 +62,14 @@ This launcher is built for players who value control, transparency, and long-ter
 
 Check our full roadmap at: <https://roadmap.sh/r/minecraft-launcher-dev>
 
-- [X] **Account Persistence** — Save login state between sessions
-- [X] **Token Refresh** — Auto-refresh expired Microsoft tokens
-- [X] **JVM Arguments Parsing** — Full support for `arguments.jvm` and `arguments.game` parsing
-- [X] **Java Auto-detection & Download** — Scan system and download Java runtimes
-- [X] **Fabric Loader Support** — Install and launch with Fabric
-- [X] **Forge Loader Support** — Install and launch with Forge
-- [X] **GitHub Releases Integration** — View changelogs in-app
-- [ ] **Instance/Profile System** — Multiple isolated game directories with different versions/mods
+- [x] **Account Persistence** — Save login state between sessions
+- [x] **Token Refresh** — Auto-refresh expired Microsoft tokens
+- [x] **JVM Arguments Parsing** — Full support for `arguments.jvm` and `arguments.game` parsing
+- [x] **Java Auto-detection & Download** — Scan system and download Java runtimes
+- [x] **Fabric Loader Support** — Install and launch with Fabric
+- [x] **Forge Loader Support** — Install and launch with Forge
+- [x] **GitHub Releases Integration** — View changelogs in-app
+- [ ] **[WIP]Instance/Profile System** — Multiple isolated game directories with different versions/mods
 - [ ] **Multi-account Support** — Switch between multiple accounts seamlessly
 - [ ] **Custom Game Directory** — Allow users to choose game files location
 - [ ] **Launcher Auto-updater** — Self-update mechanism via Tauri updater plugin
@@ -78,21 +80,21 @@ Check our full roadmap at: <https://roadmap.sh/r/minecraft-launcher-dev>
 
 Download the latest release for your platform from the [Releases](https://github.com/HsiangNianian/DropOut/releases) page.
 
-| Platform       | Files                   |
-| -------------- | ----------------------- |
-| Linux x86_64   | `.deb`, `.AppImage` |
-| Linux ARM64    | `.deb`, `.AppImage` |
-| macOS ARM64    | `.dmg`                |
-| Windows x86_64 | `.msi`, `.exe`      |
-| Windows ARM64  | `.msi`, `.exe`      |
+| Platform | Files |
+| -------------- | ------------------- |
+| Linux x86_64 | `.deb`, `.AppImage` |
+| Linux ARM64 | `.deb`, `.AppImage` |
+| macOS ARM64 | `.dmg` |
+| Windows x86_64 | `.msi`, `.exe` |
+| Windows ARM64 | `.msi`, `.exe` |
 
 ## Building from Source
 
 ### Prerequisites
 
 1. **Rust**: Install from [rustup.rs](https://rustup.rs/).
-2. **Node.js** & **pnpm**: Used for the frontend dependencies.
-3. **System Dependencies**: Follow the [Tauri Prerequisites](https://v2.tauri.app/start/prerequisites/) for your OS.
+1. **Node.js** & **pnpm**: Used for the frontend dependencies.
+1. **System Dependencies**: Follow the [Tauri Prerequisites](https://v2.tauri.app/start/prerequisites/) for your OS.
 
 ### Steps
 
@@ -103,22 +105,20 @@ Download the latest release for your platform from the [Releases](https://github
    cd DropOut
    ```
 
-2. **Install Frontend Dependencies**
+2. **Install Dependencies**
 
    ```bash
-   cd ui
    pnpm install
-   cd ..
    ```
 
-3. **Run in Development Mode**
+1. **Run in Development Mode**
 
    ```bash
    # This will start the frontend server and the Tauri app window
    cargo tauri dev
    ```
 
-4. **Build Release Version**
+1. **Build Release Version**
 
    ```bash
    cargo tauri build

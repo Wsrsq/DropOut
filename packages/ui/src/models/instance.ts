@@ -96,14 +96,8 @@ export const useInstanceStore = create<InstanceState>((set, get) => ({
   },
 
   setActiveInstance: async (instance) => {
-    try {
-      await setActiveInstance(instance.id);
-      set({ activeInstance: instance });
-      toast.success("Active instance changed");
-    } catch (e) {
-      console.error("Failed to set active instance:", e);
-      toast.error("Error setting active instance");
-    }
+    await setActiveInstance(instance.id);
+    set({ activeInstance: instance });
   },
 
   duplicate: async (id, newName) => {

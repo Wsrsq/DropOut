@@ -49,12 +49,33 @@ function NavItem({ Icon, label, to }: NavItemProps) {
 export function Sidebar() {
   const authStore = useAuthStore();
 
+  const renderUserAvatar = () => {
+    return (
+      <div className="w-full flex flex-col items-center hover:bg-accent/90 transition-colors cursor-pointer">
+        <div className="lg:hidden">
+          <UserAvatar />
+        </div>
+        <div className="w-full hidden lg:flex bg-accent/90 p-3 flex-row space-x-3">
+          <UserAvatar />
+          <div className="">
+            <p className="text-sm font-medium text-white">
+              {authStore.account?.username}
+            </p>
+            <p className="text-xs text-zinc-400">
+              {authStore.account?.type === "microsoft" ? "Online" : "Offline"}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <aside
       className={cn(
         "flex flex-col items-center lg:items-start",
         "bg-sidebar transition-all duration-300",
-        "w-20 lg:w-64 shrink-0 py-6 h-full",
+        "w-20 lg:w-64 shrink-0 pt-6 pb-6 lg:pb-3 h-full",
       )}
     >
       {/* Logo Area */}
@@ -162,9 +183,9 @@ export function Sidebar() {
         <NavItem Icon={Settings} label="Settings" to="/settings" />
       </nav>
 
-      <div className="flex-1 flex flex-col justify-end">
+      <div className="w-full lg:px-3 flex-1 flex flex-col justify-end">
         <DropdownMenu>
-          <DropdownMenuTrigger render={<UserAvatar />}>
+          <DropdownMenuTrigger render={renderUserAvatar()} className="w-full">
             Open
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" side="right" sideOffset={20}>
