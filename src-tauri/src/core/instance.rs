@@ -450,8 +450,8 @@ impl InstanceState {
     ) -> Result<Instance, String> {
         // Local RAII guard to ensure end_operation is always called
         struct OperationGuard<'a> {
-            manager: &'a InstanceManager,
-            id:       &'a str,
+            manager: &'a InstanceState,
+            id: &'a str,
         }
 
         impl<'a> Drop for OperationGuard<'a> {
@@ -462,10 +462,7 @@ impl InstanceState {
         }
 
         self.begin_operation(id, InstanceOperation::ImportExport)?;
-        let _operation_guard = OperationGuard {
-            manager: self,
-            id,
-        };
+        let _operation_guard = OperationGuard { manager: self, id };
 
         let source_instance = self
             .get_instance(id)
