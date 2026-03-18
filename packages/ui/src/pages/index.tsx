@@ -19,7 +19,9 @@ export function IndexPage() {
     authStore.init();
     settingsStore.refresh();
     instanceStore.refresh();
-    initGameLifecycle();
+    void initGameLifecycle().catch((error) => {
+      console.error("Failed to initialize game lifecycle:", error);
+    });
   }, [authStore.init, settingsStore.refresh, instanceStore.refresh, initGameLifecycle]);
 
   return (
