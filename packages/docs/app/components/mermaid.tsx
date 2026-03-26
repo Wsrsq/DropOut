@@ -13,24 +13,20 @@ export function Mermaid({ chart }: { chart: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const renderChart = async () => {
-      if (!ref.current) return;
-
-      try {
-        const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`;
-        const { svg } = await mermaid.render(id, chart);
-        // Use innerHTML with sanitized SVG from mermaid.render
-        // biome-disable-next-line security/noInnerHtml
-        ref.current.innerHTML = svg;
-      } catch {
-        // Invalid chart definition, render nothing
-        if (ref.current) {
-          ref.current.innerHTML = "";
+    const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`;
+    mermaid
+      .render(id, chart)
+      .then(({ svg }) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svg, "image/svg+xml");
+        const svgEl = doc.querySelector("svg");
+        if (ref.current && svgEl) {
+          ref.current.replaceChildren(svgEl);
         }
-      }
-    };
-
-    renderChart();
+      })
+      .catch(() => {
+        ref.current?.replaceChildren();
+      });
   }, [chart]);
 
   return (
