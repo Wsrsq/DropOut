@@ -2,4 +2,4 @@
 "@dropout/docs": "patch:chore"
 ---
 
-Partial apply docs fe code lints
+Partially apply docs frontend lint fixes
