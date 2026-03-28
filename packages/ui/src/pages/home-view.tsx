@@ -32,20 +32,20 @@ export function HomeView() {
 
   const handleSaturnTouchStart = (e: React.TouchEvent) => {
     if (e.touches && e.touches.length === 1) {
-        const clientX = e.touches[0].clientX;
-        saturn?.handleTouchStart(clientX);
+      const clientX = e.touches[0].clientX;
+      saturn?.handleTouchStart(clientX);
     }
   };
 
   const handleSaturnTouchMove = (e: React.TouchEvent) => {
     if (e.touches && e.touches.length === 1) {
-        const clientX = e.touches[0].clientX;
-        saturn?.handleTouchMove(clientX);
+      const clientX = e.touches[0].clientX;
+      saturn?.handleTouchMove(clientX);
     }
   };
 
   const handleSaturnTouchEnd = () => {
-      saturn?.handleTouchEnd();
+    saturn?.handleTouchEnd();
   };
 
   return (

@@ -1,8 +1,12 @@
-
 import { toNumber } from "es-toolkit/compat";
 import { Folder, Loader2, Save, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import {
+  deleteInstanceFile,
+  listInstanceDirectory,
+  openFileExplorer,
+} from "@/client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,7 +22,6 @@ import { useInstanceStore } from "@/models/instance";
 import { useSettingsStore } from "@/models/settings";
 import type { FileInfo } from "../types/bindings/core";
 import type { Instance } from "../types/bindings/instance";
-import { deleteInstanceFile, listInstanceDirectory, openFileExplorer } from "@/client";
 
 type Props = {
   open: boolean;
@@ -97,7 +100,7 @@ export function InstanceEditorModal({ open, instance, onOpenChange }: Props) {
         setFileList(files);
       } catch (err) {
         console.error("Failed to load files:", err);
-        toast.error("Failed to load files: " + String(err));
+        toast.error(`Failed to load files: ${String(err)}`);
         setFileList([]);
       } finally {
         setLoadingFiles(false);
@@ -137,7 +140,7 @@ export function InstanceEditorModal({ open, instance, onOpenChange }: Props) {
       toast.success("Deleted");
     } catch (err) {
       console.error("Failed to delete file:", err);
-      toast.error("Failed to delete file: " + String(err));
+      toast.error(`Failed to delete file: ${String(err)}`);
     } finally {
       setDeletingPath(null);
     }
@@ -148,7 +151,7 @@ export function InstanceEditorModal({ open, instance, onOpenChange }: Props) {
       await openFileExplorer(filePath);
     } catch (err) {
       console.error("Failed to open in explorer:", err);
-      toast.error("Failed to open file explorer: " + String(err));
+      toast.error(`Failed to open file explorer: ${String(err)}`);
     }
   }
 
@@ -180,7 +183,7 @@ export function InstanceEditorModal({ open, instance, onOpenChange }: Props) {
     } catch (err) {
       console.error("Failed to save instance:", err);
       setErrorMessage(String(err));
-      toast.error("Failed to save instance: " + String(err));
+      toast.error(`Failed to save instance: ${String(err)}`);
     } finally {
       setSaving(false);
     }
