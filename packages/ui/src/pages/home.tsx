@@ -2,7 +2,7 @@ import { useState } from "react";
 import { BottomBar } from "@/components/bottom-bar";
 import { useSaturnEffect } from "@/components/particle-background";
 
-export function HomeView() {
+export function HomePage() {
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0);
   const saturn = useSaturnEffect();

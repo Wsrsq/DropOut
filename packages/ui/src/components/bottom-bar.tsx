@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/models/auth";
+import { useGameStore } from "@/models/game";
 import { useInstanceStore } from "@/models/instance";
-import { useGameStore } from "@/stores/game-store";
 import { LoginModal } from "./login-modal";
 import { Button } from "./ui/button";
 import {
@@ -19,21 +19,17 @@ import { Spinner } from "./ui/spinner";
 
 export function BottomBar() {
   const account = useAuthStore((state) => state.account);
-  const instances = useInstanceStore((state) => state.instances);
-  const activeInstance = useInstanceStore((state) => state.activeInstance);
-  const setActiveInstance = useInstanceStore(
-    (state) => state.setActiveInstance,
-  );
-  const selectedVersion = useGameStore((state) => state.selectedVersion);
-  const setSelectedVersion = useGameStore((state) => state.setSelectedVersion);
-  const startGame = useGameStore((state) => state.startGame);
-  const stopGame = useGameStore((state) => state.stopGame);
-  const runningInstanceId = useGameStore((state) => state.runningInstanceId);
-  const launchingInstanceId = useGameStore(
-    (state) => state.launchingInstanceId,
-  );
-  const stoppingInstanceId = useGameStore((state) => state.stoppingInstanceId);
 
+  const { instances, activeInstance, setActiveInstance } = useInstanceStore();
+  const {
+    runningInstanceId,
+    launchingInstanceId,
+    stoppingInstanceId,
+    startGame,
+    stopGame,
+  } = useGameStore();
+
+  const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
@@ -43,7 +39,7 @@ export function BottomBar() {
     }
 
     setSelectedVersion(nextVersion);
-  }, [activeInstance?.versionId, selectedVersion, setSelectedVersion]);
+  }, [activeInstance?.versionId, selectedVersion]);
 
   const handleInstanceChange = useCallback(
     async (instanceId: string) => {
@@ -75,11 +71,8 @@ export function BottomBar() {
     }
 
     await startGame(
-      account,
-      () => setShowLoginModal(true),
       activeInstance.id,
       selectedVersion || activeInstance.versionId,
-      () => undefined,
     );
   };
 

@@ -1,6 +1,6 @@
 import { createHashRouter } from "react-router";
-import { IndexPage } from ".";
-import { HomeView } from "./home-view";
+import { HomePage } from "./home";
+import { IndexPage } from "./index";
 import instanceRoute from "./instances/routes";
 import { SettingsPage } from "./settings";
 
@@ -11,7 +11,7 @@ const router = createHashRouter([
     children: [
       {
         index: true,
-        Component: HomeView,
+        Component: HomePage,
       },
       {
         path: "settings",
