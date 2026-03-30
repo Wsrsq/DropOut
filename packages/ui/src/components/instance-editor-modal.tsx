@@ -1,8 +1,12 @@
-import { invoke } from "@tauri-apps/api/core";
+import { toNumber } from "es-toolkit/compat";
 import { Folder, Loader2, Save, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-
+import {
+  deleteInstanceFile,
+  listInstanceDirectory,
+  openFileExplorer,
+} from "@/client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,8 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-import { toNumber } from "@/lib/tsrs-utils";
 import { useInstanceStore } from "@/models/instance";
 import { useSettingsStore } from "@/models/settings";
 import type { FileInfo } from "../types/bindings/core";
@@ -94,11 +96,8 @@ export function InstanceEditorModal({ open, instance, onOpenChange }: Props) {
       if (!instance) return;
       setLoadingFiles(true);
       try {
-        const files = await invoke<FileInfo[]>("list_instance_directory", {
-          instanceId: instance.id,
-          folder,
-        });
-        setFileList(files || []);
+        const files = await listInstanceDirectory(instance.id, folder);
+        setFileList(files);
       } catch (err) {
         console.error("Failed to load files:", err);
         toast.error(`Failed to load files: ${String(err)}`);
@@ -135,7 +134,7 @@ export function InstanceEditorModal({ open, instance, onOpenChange }: Props) {
     }
     setDeletingPath(filePath);
     try {
-      await invoke("delete_instance_file", { path: filePath });
+      await deleteInstanceFile(filePath);
       // refresh the currently selected folder
       await loadFileList(selectedFileFolder);
       toast.success("Deleted");
@@ -149,7 +148,7 @@ export function InstanceEditorModal({ open, instance, onOpenChange }: Props) {
 
   async function openInExplorer(filePath: string) {
     try {
-      await invoke("open_file_explorer", { path: filePath });
+      await openFileExplorer(filePath);
     } catch (err) {
       console.error("Failed to open in explorer:", err);
       toast.error(`Failed to open file explorer: ${String(err)}`);

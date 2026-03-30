@@ -1,6 +1,7 @@
 {
   "name": "@dropout/docs",
   "type": "module",
+  "version": "0.1.0-alpha.1",
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
